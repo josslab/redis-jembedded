@@ -1,0 +1,185 @@
+package io.josslab.redis.jembedded.core;
+
+import io.josslab.redis.jembedded.RedisSentinel;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
+
+import static io.josslab.redis.jembedded.Redis.DEFAULT_REDIS_PORT;
+import static io.josslab.redis.jembedded.core.ExecutableProvider.newJarResourceProvider;
+
+public final class RedisSentinelBuilder {
+
+  private static final String LINE_SEPARATOR = System.lineSeparator();
+  private static final String CONF_FILENAME = "embedded-redis-sentinel";
+  private static final String LINE_MASTER_MONITOR = "sentinel monitor %s 127.0.0.1 %d %d";
+  private static final String LINE_DOWN_AFTER = "sentinel down-after-milliseconds %s %d";
+  private static final String LINE_FAIL_OVER = "sentinel failover-timeout %s %d";
+  private static final String LINE_PARALLEL_SYNCS = "sentinel parallel-syncs %s %d";
+  private static final String LINE_PORT = "port %d";
+
+  private File executable;
+
+  private ExecutableProvider executableProvider = newJarResourceProvider();
+  private String bind = "127.0.0.1";
+  private Integer port = 26379;
+  private int masterPort = DEFAULT_REDIS_PORT;
+  private String masterName = "mymaster";
+  private long downAfterMilliseconds = 60000L;
+  private long failOverTimeout = 180000L;
+  private int parallelSyncs = 1;
+  private int quorumSize = 1;
+  private String sentinelConf;
+  private boolean forceStop = false;
+  private Consumer<String> soutListener;
+  private Consumer<String> serrListener;
+
+  private StringBuilder redisConfigBuilder;
+
+  public RedisSentinelBuilder executableProvider(final ExecutableProvider executableProvider) {
+    this.executableProvider = executableProvider;
+    return this;
+  }
+
+  public RedisSentinelBuilder bind(final String bind) {
+    this.bind = bind;
+    return this;
+  }
+
+  public RedisSentinelBuilder port(final Integer port) {
+    this.port = port;
+    return this;
+  }
+
+  public RedisSentinelBuilder masterPort(final Integer masterPort) {
+    this.masterPort = masterPort;
+    return this;
+  }
+
+  public RedisSentinelBuilder masterName(final String masterName) {
+    this.masterName = masterName;
+    return this;
+  }
+
+  public RedisSentinelBuilder quorumSize(final int quorumSize) {
+    this.quorumSize = quorumSize;
+    return this;
+  }
+
+  public RedisSentinelBuilder downAfterMilliseconds(final long downAfterMilliseconds) {
+    this.downAfterMilliseconds = downAfterMilliseconds;
+    return this;
+  }
+
+  public RedisSentinelBuilder failOverTimeout(final long failoverTimeout) {
+    this.failOverTimeout = failoverTimeout;
+    return this;
+  }
+
+  public RedisSentinelBuilder parallelSyncs(final int parallelSyncs) {
+    this.parallelSyncs = parallelSyncs;
+    return this;
+  }
+
+  public RedisSentinelBuilder configFile(final String redisConf) {
+    if (redisConfigBuilder != null) {
+      throw new IllegalArgumentException("Redis configuration is already partially built using setting(String) method");
+    }
+    this.sentinelConf = redisConf;
+    return this;
+  }
+
+  public RedisSentinelBuilder settingIf(final boolean shouldSet, final String configLine) {
+    if (shouldSet) setting(configLine);
+    return this;
+  }
+
+  public RedisSentinelBuilder setting(final String configLine) {
+    if (sentinelConf != null)
+      throw new IllegalArgumentException("Redis configuration is already set using redis conf file");
+    if (redisConfigBuilder == null) redisConfigBuilder = new StringBuilder();
+
+    redisConfigBuilder.append(configLine).append(LINE_SEPARATOR);
+    return this;
+  }
+
+  public RedisSentinelBuilder onShutdownForceStop(final boolean forceStop) {
+    this.forceStop = forceStop;
+    return this;
+  }
+
+  public RedisSentinelBuilder soutListener(final Consumer<String> soutListener) {
+    this.soutListener = soutListener;
+    return this;
+  }
+
+  public RedisSentinelBuilder serrListener(final Consumer<String> serrListener) {
+    this.serrListener = serrListener;
+    return this;
+  }
+
+  public RedisSentinel build() {
+    tryResolveConfAndExec();
+    return new RedisSentinel(bind, port, buildCommandArgs(), forceStop, soutListener, serrListener);
+  }
+
+  private void tryResolveConfAndExec() {
+    try {
+      if (sentinelConf == null) {
+        resolveSentinelConf();
+      }
+      executable = executableProvider.get();
+    } catch (final Exception e) {
+      throw new IllegalArgumentException("Could not build sentinel instance", e);
+    }
+  }
+
+  public void reset() {
+    this.redisConfigBuilder = null;
+    this.sentinelConf = null;
+  }
+
+  public void addDefaultReplicationGroup() {
+    setting(String.format(LINE_MASTER_MONITOR, masterName, masterPort, quorumSize));
+    setting(String.format(LINE_DOWN_AFTER, masterName, downAfterMilliseconds));
+    setting(String.format(LINE_FAIL_OVER, masterName, failOverTimeout));
+    setting(String.format(LINE_PARALLEL_SYNCS, masterName, parallelSyncs));
+  }
+
+  private void resolveSentinelConf() throws IOException {
+    if (redisConfigBuilder == null) {
+      addDefaultReplicationGroup();
+    }
+    setting("bind " + bind);
+    setting(String.format(LINE_PORT, port));
+    final String configString = redisConfigBuilder.toString();
+
+    final File redisConfigFile = File.createTempFile(resolveConfigName(), ".conf");
+    redisConfigFile.deleteOnExit();
+    Files.write(redisConfigFile.toPath(), configString.getBytes());
+    sentinelConf = redisConfigFile.getAbsolutePath();
+  }
+
+  private String resolveConfigName() {
+    return CONF_FILENAME + "_" + port;
+  }
+
+  private List<String> buildCommandArgs() {
+    final List<String> args = new ArrayList<>();
+    args.add(executable.getAbsolutePath());
+    args.add(sentinelConf);
+    args.add("--sentinel");
+
+    if (port != null) {
+      args.add("--port");
+      args.add(Integer.toString(port));
+    }
+
+    return args;
+  }
+
+}
