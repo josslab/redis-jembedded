@@ -1,8 +1,11 @@
 package io.josslab.redis.jembedded.core;
 
 import io.josslab.redis.jembedded.RedisServer;
+import io.josslab.redis.jembedded.services.ExecutableLoader;
+import io.josslab.redis.jembedded.services.ExecutableProvider;
 import io.josslab.redis.jembedded.utils.NetUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.file.Files;
@@ -14,13 +17,12 @@ import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import static io.josslab.redis.jembedded.Redis.DEFAULT_REDIS_PORT;
-import static io.josslab.redis.jembedded.core.ExecutableProvider.newJarResourceProvider;
 
 public final class RedisServerBuilder {
 
   private static final String LINE_SEPARATOR = System.lineSeparator();
 
-  private ExecutableProvider provider = newJarResourceProvider();
+  private ExecutableProvider provider = ExecutableLoader.loadExecutableProvider();
   private String bindAddress = "127.0.0.1";
   private int bindPort = DEFAULT_REDIS_PORT;
   private InetSocketAddress slaveOf;
@@ -102,12 +104,13 @@ public final class RedisServerBuilder {
 
   public List<String> buildCommandArgs() throws IOException {
     setting("bind " + bindAddress);
+    File executable = provider.getExecutable();
 
     final Path redisConfigFile =
-      writeNewRedisConfigFile("embedded-redis-server_" + bindPort, redisConfigBuilder.toString());
+      writeNewRedisConfigFile(executable, "redis-jembedded-server_" + bindPort, redisConfigBuilder.toString());
 
     final List<String> args = new ArrayList<>();
-    args.add(provider.get().getAbsolutePath());
+    args.add(executable.getAbsolutePath());
     args.add(redisConfigFile.toAbsolutePath().toString());
     args.add("--port");
     args.add(Integer.toString(bindPort));
@@ -121,8 +124,9 @@ public final class RedisServerBuilder {
     return args;
   }
 
-  private static Path writeNewRedisConfigFile(final String prefix, final String contents) throws IOException {
-    final Path redisConfigFile = Files.createTempFile(prefix, ".conf");
+  private static Path writeNewRedisConfigFile(final File executableDir, final String prefix, final String contents) throws IOException {
+    Path executablePath = executableDir.toPath().getParent();
+    final Path redisConfigFile = Files.createTempFile(executablePath, prefix, ".conf");
     redisConfigFile.toFile().deleteOnExit();
     Files.write(redisConfigFile, contents.getBytes());
     return redisConfigFile;

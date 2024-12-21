@@ -11,8 +11,8 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
 
-  <artifactId>redis-jembedded-core</artifactId>
-  <name>Redis Embedded Core</name>
+  <artifactId>redis-jembedded-services</artifactId>
+  <name>Redis Embedded Services</name>
   <packaging>jar</packaging>
 
   <properties>
@@ -22,13 +22,5 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <maven.build.timestamp.format>yyyy/MM/dd hh:mm:ss a,z</maven.build.timestamp.format>
   </properties>
-
-  <dependencies>
-    <dependency>
-      <groupId>io.josslab</groupId>
-      <artifactId>redis-jembedded-services</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-  </dependencies>
 
 </project>

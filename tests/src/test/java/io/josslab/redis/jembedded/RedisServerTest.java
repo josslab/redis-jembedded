@@ -1,23 +1,20 @@
 package io.josslab.redis.jembedded;
 
+import io.josslab.redis.jembedded.command.RedisClient;
+import io.josslab.redis.jembedded.services.ExecutableProperty;
+import io.josslab.redis.jembedded.services.ExecutableProvider;
+import io.josslab.redis.jembedded.testkit.assertion.AssertConnection;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
-import io.josslab.redis.jembedded.command.RedisClient;
-import io.josslab.redis.jembedded.model.OsArchitecture;
-import io.josslab.redis.jembedded.testkit.assertion.AssertConnection;
 
 import java.io.*;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static io.josslab.redis.jembedded.RedisServer.newRedisServer;
-import static io.josslab.redis.jembedded.core.ExecutableProvider.newJarResourceProvider;
-import static io.josslab.redis.jembedded.model.OsArchitecture.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 class RedisServerTest {
 
@@ -98,33 +95,27 @@ class RedisServerTest {
 
   @Test
   void shouldOverrideDefaultExecutable() throws IOException {
-    final Map<OsArchitecture, String> map = new HashMap<>();
-    map.put(UNIX_x86, "/redis-server");
-    map.put(UNIX_x86_64, "/redis-server");
-    map.put(WINDOWS_x86_64, "/redis-server.exe");
-    map.put(MAC_OS_X_x86_64, "/redis-server");
-    map.put(MAC_OS_X_ARM64, "/redis-server");
+    String tempDir = System.getProperty("java.io.tmpdir");
+    File executable = new File(tempDir + "/redis-server-test");
+    ExecutableProvider provider = new ExecutableProvider() {
+      @Override
+      public File getExecutable() {
+        return executable;
+      }
 
+      @Override
+      public ExecutableProperty getProperty() {
+        return null;
+      }
+    };
     redisServer = newRedisServer()
-      .executableProvider(newJarResourceProvider(map))
+      .executableProvider(provider)
       .build();
-    assertNotNull(redisServer);
-  }
-
-  @Test
-  void shouldFailWhenBadExecutableGiven() {
-    final Map<OsArchitecture, String> buggyMap = new HashMap<>();
-    buggyMap.put(UNIX_x86, "some");
-    buggyMap.put(UNIX_x86_64, "some");
-    buggyMap.put(WINDOWS_x86, "some");
-    buggyMap.put(WINDOWS_x86_64, "some");
-    buggyMap.put(MAC_OS_X_x86_64, "some");
-    buggyMap.put(MAC_OS_X_ARM64, "some");
-
-    assertThrows(FileNotFoundException.class, () -> redisServer = newRedisServer()
-      .executableProvider(newJarResourceProvider(buggyMap))
-      .build());
-
+    try {
+      assertNotNull(redisServer);
+    } finally {
+      executable.delete();
+    }
   }
 
   @Test

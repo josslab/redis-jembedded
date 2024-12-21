@@ -1,6 +1,8 @@
 package io.josslab.redis.jembedded.core;
 
 import io.josslab.redis.jembedded.RedisSentinel;
+import io.josslab.redis.jembedded.services.ExecutableLoader;
+import io.josslab.redis.jembedded.services.ExecutableProvider;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,7 +12,6 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import static io.josslab.redis.jembedded.Redis.DEFAULT_REDIS_PORT;
-import static io.josslab.redis.jembedded.core.ExecutableProvider.newJarResourceProvider;
 
 public final class RedisSentinelBuilder {
 
@@ -24,7 +25,7 @@ public final class RedisSentinelBuilder {
 
   private File executable;
 
-  private ExecutableProvider executableProvider = newJarResourceProvider();
+  private ExecutableProvider executableProvider = ExecutableLoader.loadExecutableProvider();
   private String bind = "127.0.0.1";
   private Integer port = 26379;
   private int masterPort = DEFAULT_REDIS_PORT;
@@ -132,7 +133,7 @@ public final class RedisSentinelBuilder {
       if (sentinelConf == null) {
         resolveSentinelConf();
       }
-      executable = executableProvider.get();
+      executable = executableProvider.getExecutable();
     } catch (final Exception e) {
       throw new IllegalArgumentException("Could not build sentinel instance", e);
     }
