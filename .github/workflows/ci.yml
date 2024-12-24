@@ -68,9 +68,7 @@ jobs:
           distro: ubuntu22.04
           base_image: docker.io/library/maven:3.9.9-amazoncorretto-8-debian
           env: |
-            LANGUAGE: en_US.UTF-8
-            LANG: en_US.UTF-8
-            LC_ALL: en_US.UTF-8
+            LANG: ""
           install: |
             apt-get update -y && apt-get install -y locales && dpkg-reconfigure locales && locale-gen en_US.UTF-8
           run: |
