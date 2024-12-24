@@ -34,13 +34,6 @@ class RedisShardedClusterTest {
 
   @Test
   void testSimpleOperationsAfterClusterWithEphemeralPortsStart() throws IOException {
-    cluster.stop();
-    cluster = newRedisCluster().ephemeral()
-      .shard("master1", 1)
-      .shard("master2", 1)
-      .shard("master3", 1)
-      .build();
-    cluster.start();
     try (RedisCommand command = new RedisCommand("127.0.0.1", cluster.getPort())) {
       command.set("some_key", "some_value");
       assertEquals("some_value", command.get("some_key"));

@@ -2,8 +2,12 @@ package io.josslab.redis.jembedded.utils;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.security.SecureRandom;
 
 public final class NetUtils {
+  private static final int MAX_REDIS_PORT = 55535;
+  private static final int MIN_REDIS_PORT = 3000;
+  private static final SecureRandom RANDOM = new SecureRandom();
 
   private NetUtils() {
     // ignored
@@ -11,11 +15,13 @@ public final class NetUtils {
 
   public static synchronized int allocatePort(int port) {
     if (port == 0) {
-      try (ServerSocket serverSocket = new ServerSocket(0)) {
-        serverSocket.setReuseAddress(false);
-        return serverSocket.getLocalPort();
-      } catch (IOException e) {
-        return ExceptionHandler.sneakyThrow(e);
+      while (true) {
+        port = RANDOM.nextInt(MAX_REDIS_PORT - MIN_REDIS_PORT) + MIN_REDIS_PORT;
+        try (ServerSocket socket = new ServerSocket(port)) {
+          return socket.getLocalPort();
+        } catch (IOException e) {
+          // ignored
+        }
       }
     }
     return port;
