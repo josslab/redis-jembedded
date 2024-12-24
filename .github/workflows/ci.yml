@@ -7,19 +7,29 @@ on:
     branches: [ main, init, '[0-9]+.x' ]
 
 jobs:
-  build-linux-amd64:
+  build-windows-x86_64:
     runs-on: ubuntu-22.04
-    env:
-      OS: linux
-      ARCH: amd64
     steps:
-      - name: checkout
+      - name: Checkout
         uses: actions/checkout@v4
-      - name: setup jdk
+      - name: Setup JDK
         uses: actions/setup-java@v4
         with:
           java-version: 8
           distribution: corretto
           cache: maven
-      - name: build and test
+      - name: Build And Test
+        run: mvn -B verify
+  build-linux-amd64:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: 8
+          distribution: corretto
+          cache: maven
+      - name: Build And Test
         run: mvn -B verify
