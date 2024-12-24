@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>io.josslab</groupId>
+    <artifactId>redis-jembedded-parent</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+
+  <groupId>io.josslab.binary</groupId>
+  <artifactId>redis-jembedded-binary-parent</artifactId>
+  <name>Redis Embedded Binary Parent</name>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <modules>
+    <module>v7</module>
+  </modules>
+
+  <properties>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <maven.build.timestamp.format>yyyy/MM/dd hh:mm:ss a,z</maven.build.timestamp.format>
+    <plugin.build-helper.version>3.6.0</plugin.build-helper.version>
+    <plugin.download.version>1.9.0</plugin.download.version>
+  </properties>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>build-helper-maven-plugin</artifactId>
+          <version>${plugin.build-helper.version}</version>
+          <executions>
+            <execution>
+              <id>change-binary-version-property</id>
+              <phase>validate</phase>
+              <goals>
+                <goal>regex-property</goal>
+              </goals>
+              <configuration>
+                <name>binary.version</name>
+                <value>${project.version}</value>
+                <regex>(\d+.\d+.\d+)-SNAPSHOT</regex>
+                <replacement>$1</replacement>
+                <failIfNoMatch>false</failIfNoMatch>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>com.googlecode.maven-download-plugin</groupId>
+          <artifactId>download-maven-plugin</artifactId>
+          <version>${plugin.download.version}</version>
+          <executions>
+            <execution>
+              <id>download</id>
+              <phase>process-resources</phase>
+              <goals>
+                <goal>wget</goal>
+              </goals>
+              <configuration>
+                <url>
+                  https://github.com/tran4774/redis-server-binaries/releases/download/${binary.version}/redis-server-${binary.version}-${binary.os}-${binary.arch}
+                </url>
+                <outputFileName>redis-server</outputFileName>
+                <failOnError>true</failOnError>
+                <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                <cacheDirectory>${project.basedir}/.cache</cacheDirectory>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>properties-maven-plugin</artifactId>
+          <version>1.2.1</version>
+          <executions>
+            <execution>
+              <phase>generate-resources</phase>
+              <goals>
+                <goal>write-project-properties</goal>
+              </goals>
+              <configuration>
+                <outputFile>
+                  ${project.build.directory}/classes/binary.properties
+                </outputFile>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.4.2</version>
+        <configuration>
+          <archive>
+            <addMavenDescriptor>false</addMavenDescriptor>
+          </archive>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

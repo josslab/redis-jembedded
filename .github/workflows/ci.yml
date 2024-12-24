@@ -1,0 +1,108 @@
+name: Build and test Redis jEmbedded
+
+on:
+  push:
+    branches: [ main, '[0-9]+.x' ]
+  pull_request:
+    branches: [ main, '[0-9]+.x' ]
+
+jobs:
+  build-windows-x86_64:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: 8
+          distribution: corretto
+          cache: maven
+      - name: Maven version
+        run: mvn --version
+      - name: Build And Test
+        run: mvn -B verify
+
+  build-linux-amd64:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: 8
+          distribution: corretto
+          cache: maven
+      - name: Maven version
+        run: mvn --version
+      - name: Build And Test
+        run: mvn -B verify
+
+  build-linux-i386:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: 11
+          distribution: corretto
+          cache: maven
+          architecture: x86
+      - name: Maven version
+        run: mvn --version
+      - name: Build And Test
+        run: mvn -B verify -Dredis.jembedded.bypass.executable.check=true
+
+  build-linux-aarch64:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - uses: uraimo/run-on-arch-action@v2
+        name: Make on aarch64
+        with:
+          arch: aarch64
+          distro: ubuntu22.04
+          base_image: docker.io/library/maven:3.9.9-amazoncorretto-8-debian
+          env: |
+            LANG: ""
+          install: |
+            apt-get update -y && apt-get install -y locales && dpkg-reconfigure locales && locale-gen en_US.UTF-8
+          run: |
+            mvn --version
+            mvn -B verify
+
+  build-macos-aarch64:
+    runs-on: macos-14
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: 8
+          distribution: corretto
+          cache: maven
+      - name: Maven version
+        run: mvn --version
+      - name: Build And Test
+        run: mvn -B verify
+
+  build-macos-x86_64:
+    runs-on: macos-13
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: 8
+          distribution: corretto
+          cache: maven
+      - name: Maven version
+        run: mvn --version
+      - name: Build And Test
+        run: mvn -B verify

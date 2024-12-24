@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>io.josslab.binary</groupId>
+    <artifactId>redis-jembedded-binary-v7</artifactId>
+    <version>7.4.1-SNAPSHOT</version>
+    <relativePath>../../pom.xml</relativePath>
+  </parent>
+
+  <artifactId>redis-jembedded-binary-v7-windows-x86_64</artifactId>
+  <name>Redis Embedded Binary v7 Windows x86_64</name>
+  <packaging>jar</packaging>
+
+  <properties>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <maven.build.timestamp.format>yyyy/MM/dd hh:mm:ss a,z</maven.build.timestamp.format>
+    <binary.os>windows</binary.os>
+    <binary.arch>x86_64</binary.arch>
+  </properties>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>com.googlecode.maven-download-plugin</groupId>
+          <artifactId>download-maven-plugin</artifactId>
+          <version>${plugin.download.version}</version>
+          <executions>
+            <execution>
+              <id>download</id>
+              <phase>process-resources</phase>
+              <goals>
+                <goal>wget</goal>
+              </goals>
+              <configuration combine.self="override">
+                <unpack>true</unpack>
+                <url>
+                  https://github.com/tran4774/redis-server-binaries/releases/download/${binary.version}/redis-server-${binary.version}-${binary.os}-${binary.arch}.zip
+                </url>
+                <includes>
+                  **/*.dll,
+                  **/redis-server.exe
+                </includes>
+                <fileMappers>
+                  <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.FlattenFileMapper"/>
+                </fileMappers>
+                <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                <cacheDirectory>${project.basedir}/.cache</cacheDirectory>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>com.googlecode.maven-download-plugin</groupId>
+        <artifactId>download-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>properties-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
