@@ -4,7 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisSentinelPool;
-import io.josslab.redis.jembedded.core.RedisSentinelBuilder;
+import io.josslab.redis.jembedded.builder.RedisSentinelBuilder;
 import io.josslab.redis.jembedded.utils.NetUtils;
 
 import java.io.IOException;

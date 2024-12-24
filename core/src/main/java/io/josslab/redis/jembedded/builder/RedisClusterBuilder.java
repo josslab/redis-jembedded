@@ -1,4 +1,4 @@
-package io.josslab.redis.jembedded.core;
+package io.josslab.redis.jembedded.builder;
 
 import io.josslab.redis.jembedded.Redis;
 import io.josslab.redis.jembedded.RedisCluster;
@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import static io.josslab.redis.jembedded.core.PortProvider.*;
+import static io.josslab.redis.jembedded.builder.PortProvider.*;
 
 public final class RedisClusterBuilder {
 

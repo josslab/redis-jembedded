@@ -1,10 +1,10 @@
 package io.josslab.redis.jembedded.ports;
 
 import org.junit.jupiter.api.Test;
-import io.josslab.redis.jembedded.core.PortProvider;
+import io.josslab.redis.jembedded.builder.PortProvider;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static io.josslab.redis.jembedded.core.PortProvider.newSequencePortProvider;
+import static io.josslab.redis.jembedded.builder.PortProvider.newSequencePortProvider;
 
 class SequencePortProviderTest {
 

@@ -1,6 +1,6 @@
 package io.josslab.redis.jembedded;
 
-import io.josslab.redis.jembedded.core.RedisServerBuilder;
+import io.josslab.redis.jembedded.builder.RedisServerBuilder;
 
 import java.util.List;
 import java.util.function.Consumer;

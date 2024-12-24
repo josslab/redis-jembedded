@@ -1,6 +1,6 @@
 package io.josslab.redis.jembedded.model;
 
-import io.josslab.redis.jembedded.core.PortProvider;
+import io.josslab.redis.jembedded.builder.PortProvider;
 
 import java.util.LinkedList;
 import java.util.List;

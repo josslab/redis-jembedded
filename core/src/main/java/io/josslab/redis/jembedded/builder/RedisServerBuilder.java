@@ -1,4 +1,4 @@
-package io.josslab.redis.jembedded.core;
+package io.josslab.redis.jembedded.builder;
 
 import io.josslab.redis.jembedded.RedisServer;
 import io.josslab.redis.jembedded.services.ExecutableLoader;

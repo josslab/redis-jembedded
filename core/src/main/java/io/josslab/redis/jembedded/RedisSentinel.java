@@ -1,6 +1,6 @@
 package io.josslab.redis.jembedded;
 
-import io.josslab.redis.jembedded.core.RedisSentinelBuilder;
+import io.josslab.redis.jembedded.builder.RedisSentinelBuilder;
 
 import java.util.List;
 import java.util.function.Consumer;

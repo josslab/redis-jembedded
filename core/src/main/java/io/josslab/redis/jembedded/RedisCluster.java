@@ -1,6 +1,6 @@
 package io.josslab.redis.jembedded;
 
-import io.josslab.redis.jembedded.core.RedisClusterBuilder;
+import io.josslab.redis.jembedded.builder.RedisClusterBuilder;
 
 import java.io.IOException;
 import java.util.ArrayList;
