@@ -74,3 +74,35 @@ jobs:
           run: |
             mvn --version
             mvn -B verify
+
+  build-macos-aarch64:
+    runs-on: macos-14
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: 8
+          distribution: corretto
+          cache: maven
+      - name: Maven version
+        run: mvn --version
+      - name: Build And Test
+        run: mvn -B verify
+
+  build-macos-x86_64:
+    runs-on: macos-13
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: 8
+          distribution: corretto
+          cache: maven
+      - name: Maven version
+        run: mvn --version
+      - name: Build And Test
+        run: mvn -B verify
