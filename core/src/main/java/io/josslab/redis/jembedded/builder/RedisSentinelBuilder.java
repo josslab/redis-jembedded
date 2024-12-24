@@ -16,7 +16,7 @@ import static io.josslab.redis.jembedded.Redis.DEFAULT_REDIS_PORT;
 public final class RedisSentinelBuilder {
 
   private static final String LINE_SEPARATOR = System.lineSeparator();
-  private static final String CONF_FILENAME = "embedded-redis-sentinel";
+  private static final String CONF_FILENAME = "redis-jembedded-sentinel";
   private static final String LINE_MASTER_MONITOR = "sentinel monitor %s 127.0.0.1 %d %d";
   private static final String LINE_DOWN_AFTER = "sentinel down-after-milliseconds %s %d";
   private static final String LINE_FAIL_OVER = "sentinel failover-timeout %s %d";
@@ -25,7 +25,7 @@ public final class RedisSentinelBuilder {
 
   private File executable;
 
-  private ExecutableProvider executableProvider = ExecutableLoader.loadExecutableProvider();
+  private ExecutableProvider executableProvider = ExecutableLoader.load();
   private String bind = "127.0.0.1";
   private Integer port = 26379;
   private int masterPort = DEFAULT_REDIS_PORT;
@@ -130,10 +130,10 @@ public final class RedisSentinelBuilder {
 
   private void tryResolveConfAndExec() {
     try {
+      executable = executableProvider.getExecutable();
       if (sentinelConf == null) {
         resolveSentinelConf();
       }
-      executable = executableProvider.getExecutable();
     } catch (final Exception e) {
       throw new IllegalArgumentException("Could not build sentinel instance", e);
     }
@@ -159,7 +159,7 @@ public final class RedisSentinelBuilder {
     setting(String.format(LINE_PORT, port));
     final String configString = redisConfigBuilder.toString();
 
-    final File redisConfigFile = File.createTempFile(resolveConfigName(), ".conf");
+    final File redisConfigFile = new File(executable.getParent() + File.separator + resolveConfigName() + ".conf");
     redisConfigFile.deleteOnExit();
     Files.write(redisConfigFile.toPath(), configString.getBytes());
     sentinelConf = redisConfigFile.getAbsolutePath();

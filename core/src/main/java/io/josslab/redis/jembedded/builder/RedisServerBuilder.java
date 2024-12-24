@@ -13,6 +13,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -22,7 +23,7 @@ public final class RedisServerBuilder {
 
   private static final String LINE_SEPARATOR = System.lineSeparator();
 
-  private ExecutableProvider provider = ExecutableLoader.loadExecutableProvider();
+  private ExecutableProvider provider = ExecutableLoader.load();
   private String bindAddress = "127.0.0.1";
   private int bindPort = DEFAULT_REDIS_PORT;
   private InetSocketAddress slaveOf;
@@ -108,12 +109,16 @@ public final class RedisServerBuilder {
 
     final Path redisConfigFile =
       writeNewRedisConfigFile(executable, "redis-jembedded-server_" + bindPort, redisConfigBuilder.toString());
+//    final File dbFile = writeNewRedisDBFile(executable, "dump");
 
     final List<String> args = new ArrayList<>();
     args.add(executable.getAbsolutePath());
     args.add(redisConfigFile.toAbsolutePath().toString());
     args.add("--port");
     args.add(Integer.toString(bindPort));
+
+    args.add("--dbfilename");
+    args.add("dump_" + UUID.randomUUID() + ".rdb");
 
     if (slaveOf != null) {
       args.add("--slaveof");

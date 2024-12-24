@@ -11,6 +11,8 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.nio.file.FileVisitResult.CONTINUE;
+
 public final class ExecutableDeleteHook {
 
   private static final List<File> DELETE_FILES = new ArrayList<>();
@@ -26,14 +28,16 @@ public final class ExecutableDeleteHook {
           Files.walkFileTree(file.toPath().getParent(), new SimpleFileVisitor<Path>() {
             @Override
             public FileVisitResult visitFile(Path path, BasicFileAttributes basicFileAttributes) throws IOException {
+              if (path.equals(file.toPath())) {
+                return CONTINUE;
+              }
               Files.delete(path);
-              return FileVisitResult.CONTINUE;
+              return CONTINUE;
             }
 
             @Override
             public FileVisitResult postVisitDirectory(Path directory, IOException ioException) throws IOException {
-              Files.delete(directory);
-              return FileVisitResult.CONTINUE;
+              return CONTINUE;
             }
           });
         } catch (IOException e) {

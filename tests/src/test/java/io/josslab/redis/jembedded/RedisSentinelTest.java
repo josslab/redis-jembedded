@@ -1,11 +1,11 @@
 package io.josslab.redis.jembedded;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Timeout;
 import io.josslab.redis.jembedded.command.RedisCommand;
 import io.josslab.redis.jembedded.command.RedisSentinelCommand;
 import io.josslab.redis.jembedded.testkit.assertion.AssertConnection;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import java.io.BufferedReader;
 import java.io.IOException;

@@ -1,8 +1,8 @@
 package io.josslab.redis.jembedded;
 
+import io.josslab.redis.jembedded.builder.RedisShardedClusterBuilder;
 import io.josslab.redis.jembedded.command.RedisClient;
 import io.josslab.redis.jembedded.command.RedisCommand;
-import io.josslab.redis.jembedded.builder.RedisShardedClusterBuilder;
 import io.josslab.redis.jembedded.error.RedisClusterSetupException;
 
 import java.io.IOException;

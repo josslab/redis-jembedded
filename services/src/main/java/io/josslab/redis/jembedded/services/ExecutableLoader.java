@@ -8,7 +8,12 @@ import static io.josslab.redis.jembedded.services.EnvironmentUtils.detectOS;
 
 public class ExecutableLoader {
 
-  public static ExecutableProvider loadExecutableProvider() {
+  private static ExecutableProvider provider;
+
+  public static ExecutableProvider load() {
+    if (provider != null) {
+      return provider;
+    }
     ServiceLoader<ExecutableProvider> serviceLoader = ServiceLoader.load(ExecutableProvider.class);
     Iterator<ExecutableProvider> iterator = serviceLoader.iterator();
     if (!iterator.hasNext()) {
@@ -33,6 +38,7 @@ public class ExecutableLoader {
         property.os().getName(), arch.getName(), os.getName(), arch.getName()
       ));
     }
-    return executableProvider;
+    provider = executableProvider;
+    return provider;
   }
 }

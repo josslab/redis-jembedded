@@ -5,8 +5,8 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.function.Function;
 
-import static java.util.function.Function.identity;
 import static io.josslab.redis.jembedded.command.Mark.*;
+import static java.util.function.Function.identity;
 
 /**
  * Implements the encoding (writing) side.

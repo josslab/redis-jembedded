@@ -1,11 +1,11 @@
 package io.josslab.redis.jembedded;
 
+import io.josslab.redis.jembedded.builder.RedisSentinelBuilder;
+import io.josslab.redis.jembedded.utils.NetUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisSentinelPool;
-import io.josslab.redis.jembedded.builder.RedisSentinelBuilder;
-import io.josslab.redis.jembedded.utils.NetUtils;
 
 import java.io.IOException;
 import java.net.Inet4Address;
@@ -15,14 +15,14 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static io.josslab.redis.jembedded.RedisCluster.newRedisCluster;
+import static io.josslab.redis.jembedded.RedisSentinel.newRedisSentinel;
+import static io.josslab.redis.jembedded.utils.Collections.newHashSet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static io.josslab.redis.jembedded.RedisCluster.newRedisCluster;
-import static io.josslab.redis.jembedded.RedisSentinel.newRedisSentinel;
-import static io.josslab.redis.jembedded.utils.Collections.newHashSet;
 
 class RedisClusterTest {
   private final RedisSentinelBuilder sentinelBuilder = newRedisSentinel();

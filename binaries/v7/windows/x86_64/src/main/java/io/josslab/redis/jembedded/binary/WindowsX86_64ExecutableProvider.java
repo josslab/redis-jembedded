@@ -35,15 +35,15 @@ public class WindowsX86_64ExecutableProvider extends AbstractExecutableProvider 
       .setOs(WINDOWS)
       .setArch(X86_64)
       .setJarVersion(properties.get("binary.jar-version"))
-      .setBinaryVersion(properties.get("binary-version"));
+      .setBinaryVersion(properties.get("binary.version"));
   }
 
   @Override
   protected File doGetExecutable() {
-    File tempDir = EnvironmentUtils.newTempDirForBinary("redis-jembedded-windows-x86_64-");
+    File tempDir = EnvironmentUtils.newTempDirForBinary("redis-jembedded-windows-x86_64-" + EXECUTABLE_PROPERTY.jarVersion());
     try {
       writeBinaryDll(tempDir);
-      return EnvironmentUtils.writeResourceToExecutableFile(WindowsX86_64ExecutableProvider.class, tempDir, "redis-server.exe");
+      return EnvironmentUtils.writeResourceToExecutableFile(WindowsX86_64ExecutableProvider.class, tempDir, "redis-server", "redis-server-" + EXECUTABLE_PROPERTY.binaryVersion() + ".exe");
     } catch (IOException e) {
       throw new UncheckedIOException(e);
     }
@@ -54,9 +54,14 @@ public class WindowsX86_64ExecutableProvider extends AbstractExecutableProvider 
     return EXECUTABLE_PROPERTY;
   }
 
+  @Override
+  protected boolean addDeleteHook() {
+    return true;
+  }
+
   private void writeBinaryDll(File tempDir) throws IOException {
     for (String binaryDllFile : BINARY_DLL_FILES) {
-      EnvironmentUtils.writeResourceToExecutableFile(this.getClass(), tempDir, binaryDllFile);
+      EnvironmentUtils.writeResourceToExecutableFile(this.getClass(), tempDir, binaryDllFile, null);
     }
   }
 }

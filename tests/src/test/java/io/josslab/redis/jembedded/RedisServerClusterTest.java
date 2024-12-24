@@ -1,15 +1,15 @@
 package io.josslab.redis.jembedded;
 
+import io.josslab.redis.jembedded.command.RedisClient;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import io.josslab.redis.jembedded.command.RedisClient;
 
 import java.io.IOException;
 
+import static io.josslab.redis.jembedded.RedisServer.newRedisServer;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static io.josslab.redis.jembedded.RedisServer.newRedisServer;
 
 class RedisServerClusterTest {
 

@@ -1,9 +1,9 @@
 package io.josslab.redis.jembedded.binary;
 
-import io.josslab.redis.jembedded.services.provider.AbstractExecutableProvider;
 import io.josslab.redis.jembedded.services.DefaultExecutableProperty;
 import io.josslab.redis.jembedded.services.EnvironmentUtils;
 import io.josslab.redis.jembedded.services.ExecutableProperty;
+import io.josslab.redis.jembedded.services.provider.AbstractExecutableProvider;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,14 +24,14 @@ public class MacOSX86_64ExecutableProvider extends AbstractExecutableProvider {
       .setOs(MAC_OS_X)
       .setArch(X86_64)
       .setJarVersion(properties.get("binary.jar-version"))
-      .setBinaryVersion(properties.get("binary-version"));
+      .setBinaryVersion(properties.get("binary.version"));
   }
 
   @Override
   protected File doGetExecutable() {
-    File tempDir = EnvironmentUtils.newTempDirForBinary("redis-jembedded-macos-x86_64-");
+    File tempDir = EnvironmentUtils.newTempDirForBinary("redis-jembedded-macos-x86_64-" + EXECUTABLE_PROPERTY.jarVersion());
     try {
-      return EnvironmentUtils.writeResourceToExecutableFile(MacOSX86_64ExecutableProvider.class, tempDir, "redis-server");
+      return EnvironmentUtils.writeResourceToExecutableFile(MacOSX86_64ExecutableProvider.class, tempDir, "redis-server", "redis-server-" + EXECUTABLE_PROPERTY.binaryVersion());
     } catch (IOException e) {
       throw new UncheckedIOException(e);
     }
@@ -40,5 +40,10 @@ public class MacOSX86_64ExecutableProvider extends AbstractExecutableProvider {
   @Override
   public ExecutableProperty getProperty() {
     return EXECUTABLE_PROPERTY;
+  }
+
+  @Override
+  protected boolean addDeleteHook() {
+    return true;
   }
 }

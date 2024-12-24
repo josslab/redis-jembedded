@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static java.util.Collections.emptyList;
 import static io.josslab.redis.jembedded.utils.Objects.requireNonNullElse;
+import static java.util.Collections.emptyList;
 
 /**
  * Implementation of redis sentinel command

@@ -9,7 +9,6 @@ import java.util.stream.Stream;
 
 import static io.josslab.redis.jembedded.services.Arch.*;
 import static io.josslab.redis.jembedded.services.OS.*;
-import static java.nio.file.Files.createTempDirectory;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public final class EnvironmentUtils {
@@ -68,25 +67,26 @@ public final class EnvironmentUtils {
     return new BufferedReader(new InputStreamReader(proc.getInputStream())).lines();
   }
 
-  public static File newTempDirForBinary(String prefix) {
-    try {
-      final File tempDirectory = createTempDirectory(prefix).toFile();
-      tempDirectory.deleteOnExit();
-      return tempDirectory;
-    } catch (IOException e) {
-      throw new UncheckedIOException(e);
+  public static File newTempDirForBinary(String folderName) {
+    String tempDir = System.getProperty("java.io.tmpdir");
+    final File tempDirectory = new File(tempDir + File.separator + folderName);
+    if (!tempDirectory.exists()) {
+      tempDirectory.mkdirs();
     }
+    return tempDirectory;
   }
 
-  public static File writeResourceToExecutableFile(Class<?> clazz, final File tempDirectory, final String resourcePath) throws IOException {
-    final File executable = new File(tempDirectory, resourcePath);
+  public static synchronized File writeResourceToExecutableFile(Class<?> clazz, final File tempDirectory, final String resourcePath, String newName) throws IOException {
+    final File executable = new File(tempDirectory, newName == null ? resourcePath : newName);
+    if (executable.exists()) {
+      return executable;
+    }
     try (final InputStream in = clazz.getClassLoader().getResourceAsStream(resourcePath)) {
       if (in == null) {
         throw new FileNotFoundException("Could not find Redis executable at " + resourcePath);
       }
       Files.copy(in, executable.toPath(), REPLACE_EXISTING);
     }
-    executable.deleteOnExit();
     if (!executable.setExecutable(true)) {
       throw new IOException("Failed to set executable permission for binary " + resourcePath + " at temporary location " + executable);
     }

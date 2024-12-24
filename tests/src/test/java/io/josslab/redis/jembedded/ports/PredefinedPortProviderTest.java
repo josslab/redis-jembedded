@@ -1,16 +1,16 @@
 package io.josslab.redis.jembedded.ports;
 
+import io.josslab.redis.jembedded.builder.PortProvider;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import io.josslab.redis.jembedded.builder.PortProvider;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static io.josslab.redis.jembedded.builder.PortProvider.newPredefinedPortProvider;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class PredefinedPortProviderTest {
 
