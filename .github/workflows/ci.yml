@@ -47,7 +47,7 @@ jobs:
           distribution: corretto
           cache: maven
           architecture: x86
+      - name: Maven version
+        run: mvn --version
       - name: Build And Test
-        run: |
-          mvn --version
-          mvn -B verify
+        run: mvn -B verify
