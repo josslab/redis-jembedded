@@ -68,7 +68,14 @@ jobs:
           distribution: corretto
           cache: maven
           architecture: aarch64
-      - name: Maven version
-        run: mvn --version
-      - name: Build And Test
-        run: mvn -B verify
+      - uses: uraimo/run-on-arch-action@v2
+        name: Make on aarch64
+        with:
+          arch: aarch64
+          distro: ubuntu22.04
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          install: |
+            apt-get update -y && apt-get install -y build-essential libssl-dev
+          run: |
+            mvn --version
+            mvn -B verify
