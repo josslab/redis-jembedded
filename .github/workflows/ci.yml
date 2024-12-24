@@ -43,7 +43,7 @@ jobs:
       - name: Setup JDK
         uses: actions/setup-java@v4
         with:
-          java-version: 8
+          java-version: 11
           distribution: corretto
           cache: maven
           architecture: x86
