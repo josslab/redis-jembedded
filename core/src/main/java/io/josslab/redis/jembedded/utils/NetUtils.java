@@ -17,7 +17,8 @@ public final class NetUtils {
     if (port == 0) {
       while (true) {
         port = RANDOM.nextInt(MAX_REDIS_PORT - MIN_REDIS_PORT) + MIN_REDIS_PORT;
-        try (ServerSocket socket = new ServerSocket(port)) {
+        try (ServerSocket socket = new ServerSocket(port, 1)) {
+          socket.setReuseAddress(true);
           return socket.getLocalPort();
         } catch (IOException e) {
           // ignored

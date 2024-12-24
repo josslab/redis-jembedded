@@ -20,6 +20,7 @@ jobs:
           cache: maven
       - name: Build And Test
         run: mvn -B verify
+
   build-linux-amd64:
     runs-on: ubuntu-22.04
     steps:
@@ -31,5 +32,20 @@ jobs:
           java-version: 8
           distribution: corretto
           cache: maven
+      - name: Build And Test
+        run: mvn -B verify
+
+  build-linux-i386:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: 8
+          distribution: corretto
+          cache: maven
+          architecture: x86
       - name: Build And Test
         run: mvn -B verify
