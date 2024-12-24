@@ -64,6 +64,7 @@ jobs:
       - uses: uraimo/run-on-arch-action@v2
         name: Make on aarch64
         with:
+          githubToken: ${{ github.token }}
           arch: aarch64
           distro: ubuntu22.04
           base_image: docker.io/library/maven:3.9.9-amazoncorretto-8-debian
