@@ -23,7 +23,3 @@ jobs:
           cache: maven
       - name: build and test
         run: mvn -B verify
-      - name: codecov
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
