@@ -71,6 +71,8 @@ jobs:
             LANGUAGE: en_US.UTF-8
             LANG: en_US.UTF-8
             LC_ALL: en_US.UTF-8
+          install: |
+            apt-get update -y && apt-get install -y language-pack-id && dpkg-reconfigure locales
           run: |
             mvn --version
             mvn -B verify
