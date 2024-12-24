@@ -63,6 +63,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: 8
+          distribution: corretto
+          cache: maven
       - uses: uraimo/run-on-arch-action@v2
         name: Make on aarch64
         with:
@@ -72,6 +78,8 @@ jobs:
           base_image: docker.io/library/maven:3.9.9-amazoncorretto-8-debian
           env: |
             LANG: ""
+          dockerRunArgs: |
+            --volume "/home/runner/.m2:/root/.m2/"
           install: |
             apt-get update -y && apt-get install -y locales && dpkg-reconfigure locales && locale-gen en_US.UTF-8
           run: |
