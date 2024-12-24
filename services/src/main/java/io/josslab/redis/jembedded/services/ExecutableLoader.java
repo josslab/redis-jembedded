@@ -7,8 +7,13 @@ import static io.josslab.redis.jembedded.services.EnvironmentUtils.detectArchite
 import static io.josslab.redis.jembedded.services.EnvironmentUtils.detectOS;
 
 public class ExecutableLoader {
-
+  private static final String REDIS_JEMBEDDED_BYPASS_EXECUTABLE_CHECK = "redis.jembedded.bypass.executable.check";
+  private static final boolean BYPASS;
   private static ExecutableProvider provider;
+
+  static {
+    BYPASS = Boolean.parseBoolean(System.getProperty(REDIS_JEMBEDDED_BYPASS_EXECUTABLE_CHECK));
+  }
 
   public static ExecutableProvider load() {
     if (provider != null) {
@@ -32,7 +37,7 @@ public class ExecutableLoader {
     if (property == null) {
       throw new NullPointerException("Cannot get executable property");
     }
-    if (property.os() != os || property.arch() != arch) {
+    if (!BYPASS && (property.os() != os || property.arch() != arch)) {
       throw new IllegalStateException(String.format(
         "Executable you provided (%s %s) doesn't match with current environment (%s %s)",
         property.os().getName(), property.arch().getName(), os.getName(), arch.getName()

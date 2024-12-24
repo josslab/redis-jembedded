@@ -50,4 +50,4 @@ jobs:
       - name: Maven version
         run: mvn --version
       - name: Build And Test
-        run: mvn -B verify
+        run: mvn -B verify -Dredis.jembedded.bypass.executable.check=true
