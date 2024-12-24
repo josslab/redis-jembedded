@@ -2,9 +2,9 @@ name: Build and test Redis jEmbedded
 
 on:
   push:
-    branches: [ main, init, '[0-9]+.x' ]
+    branches: [ main, '[0-9]+.x' ]
   pull_request:
-    branches: [ main, init, '[0-9]+.x' ]
+    branches: [ main, '[0-9]+.x' ]
 
 jobs:
   build-windows-x86_64:
