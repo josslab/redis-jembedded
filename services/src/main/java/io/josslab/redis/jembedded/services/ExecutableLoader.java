@@ -35,7 +35,7 @@ public class ExecutableLoader {
     if (property.os() != os || property.arch() != arch) {
       throw new IllegalStateException(String.format(
         "Executable you provided (%s %s) doesn't match with current environment (%s %s)",
-        property.os().getName(), arch.getName(), os.getName(), arch.getName()
+        property.os().getName(), property.arch().getName(), os.getName(), arch.getName()
       ));
     }
     provider = executableProvider;
